@@ -5,9 +5,13 @@ Working title: aws-eu-baseline. Branding comes later.
 ## Decisions made
 
 - **Tooling:** OpenTofu, not Terraform. OpenTofu uses the MPL 2.0 licence, which is simpler for distributing modules.
-- **Region:** eu-west-1 (Ireland) as the primary region.
+- **Region:** the code takes the region as a variable and only allows EU regions. The lab account is fixed to eu-north-1 (Stockholm), so that is the default for testing.
 - **Claims:** the project says "GDPR-aligned technical baseline", never "GDPR compliant".
-- **Credentials:** AWS profiles via IAM Identity Center, no long-lived keys in files.
+- **Credentials:** temporary credentials from `aws login`, no long-lived keys in files.
+
+## Known limits of the lab account
+
+The lab account uses AWS's new sign-up experience on the Free plan. S3, KMS, CloudTrail, Config, IAM and Budgets are available. GuardDuty, Security Hub, Control Tower, Organizations and Identity Center are not, so the paid pack cannot be fully tested here without activating advanced features.
 - **Repository:** private while in development. A separate public repo will hold the free "lite" version.
 
 ## Lite version (public later)

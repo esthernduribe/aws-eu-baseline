@@ -26,7 +26,7 @@ A starter baseline for running personal data workloads on AWS in the EU. Secure 
 ## Tooling
 
 - OpenTofu
-- AWS (primary region eu-west-1, Ireland)
+- AWS (EU regions only; tested in eu-north-1, Stockholm)
 - Checkov and Prowler for scanning
 
 ## Repository layout
