@@ -33,6 +33,17 @@ variable "kms_deletion_window_in_days" {
   }
 }
 
+variable "noncurrent_version_expiration_days" {
+  description = "Days to keep old versions of overwritten or deleted objects before they are removed."
+  type        = number
+  default     = 90
+
+  validation {
+    condition     = var.noncurrent_version_expiration_days >= 1
+    error_message = "noncurrent_version_expiration_days must be at least 1."
+  }
+}
+
 variable "force_destroy" {
   description = "If true, tofu destroy also deletes every object in the bucket. Keep false for real data."
   type        = bool

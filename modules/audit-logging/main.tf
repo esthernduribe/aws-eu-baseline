@@ -22,6 +22,9 @@ resource "terraform_data" "region_guard" {
 
 # Encryption key for the logs, with a policy that lets CloudTrail use it.
 data "aws_iam_policy_document" "kms" {
+  #checkov:skip=CKV_AWS_109:In a KMS key policy "*" means this key only; the account root statement is the AWS standard pattern.
+  #checkov:skip=CKV_AWS_111:Same as above: scoped to this key by definition.
+  #checkov:skip=CKV_AWS_356:Same as above: "*" refers to this key only.
   statement {
     sid       = "AccountAdministration"
     actions   = ["kms:*"]
@@ -85,6 +88,9 @@ resource "aws_kms_alias" "logs" {
 
 # Private bucket that stores the logs.
 resource "aws_s3_bucket" "logs" {
+  #checkov:skip=CKV_AWS_144:Cross-region replication adds cost and may move data outside the EU. Optional extra, not part of the baseline.
+  #checkov:skip=CKV2_AWS_62:Event notifications are not a security control for this baseline.
+  #checkov:skip=CKV_AWS_18:This is the audit log bucket; logging it to itself would be circular. CloudTrail records API activity.
   bucket        = local.bucket_name
   force_destroy = var.force_destroy
   tags          = var.tags
@@ -229,6 +235,9 @@ resource "aws_s3_bucket_policy" "logs" {
 
 # The trail itself: records who did what in the account.
 resource "aws_cloudtrail" "this" {
+  #checkov:skip=CKV_AWS_252:SNS notifications on log delivery are optional and add moving parts. Not part of the lite baseline.
+  #checkov:skip=CKV_AWS_67:Multi-region trails are not supported on the AWS Free plan; set is_multi_region_trail = true on a paid account.
+  #checkov:skip=CKV2_AWS_10:CloudWatch Logs integration adds ongoing cost. Planned as an optional switch.
   name                          = var.trail_name
   s3_bucket_name                = aws_s3_bucket.logs.id
   kms_key_id                    = aws_kms_key.logs.arn
