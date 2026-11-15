@@ -6,6 +6,7 @@ It is part of the evidence for the Article 32 mapping. It is not legal advice.
 ## Checkov (static scan of the OpenTofu code), 15 Nov 2026
 
 First run: 70 passed, 14 failed.
+After the fixes below: 81 passed, 0 failed, 15 skipped (each skip is written next to the code with its reason).
 
 | Check | Finding | Decision | Reason |
 |---|---|---|---|
@@ -18,8 +19,6 @@ First run: 70 passed, 14 failed.
 | CKV_AWS_252 | CloudTrail has no SNS topic | Skipped (inline) | Optional, not in lite baseline |
 | CKV_AWS_67 | CloudTrail not multi-region | Skipped (inline) | Not supported on the AWS Free plan. Set is_multi_region_trail = true on a paid account |
 | CKV2_AWS_10 | CloudTrail not sent to CloudWatch Logs | Skipped (inline) | Adds ongoing cost. Planned as an optional switch |
-
-Skips are written next to the resource in the code, so anyone reading the code sees the reason.
 
 ## Prowler (live account scan)
 
