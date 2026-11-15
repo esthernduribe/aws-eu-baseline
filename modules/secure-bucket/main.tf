@@ -10,11 +10,32 @@ resource "terraform_data" "region_guard" {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
+# Explicit key policy. "Resource *" in a key policy means "this key only", and the
+# account root principal lets normal IAM permissions control who may use the key.
+data "aws_iam_policy_document" "kms" {
+  #checkov:skip=CKV_AWS_109:In a KMS key policy "*" means this key only; the account root statement is the AWS standard pattern.
+  #checkov:skip=CKV_AWS_111:Same as above: scoped to this key by definition.
+  #checkov:skip=CKV_AWS_356:Same as above: "*" refers to this key only.
+  statement {
+    sid       = "AccountAdministration"
+    actions   = ["kms:*"]
+    resources = ["*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+  }
+}
+
 # Encryption key for the bucket. Automatic yearly rotation is on.
 resource "aws_kms_key" "this" {
   description             = "Key for the ${var.bucket_name} bucket"
   enable_key_rotation     = true
   deletion_window_in_days = var.kms_deletion_window_in_days
+  policy                  = data.aws_iam_policy_document.kms.json
   tags                    = var.tags
 
   depends_on = [terraform_data.region_guard]
@@ -26,6 +47,9 @@ resource "aws_kms_alias" "this" {
 }
 
 resource "aws_s3_bucket" "this" {
+  #checkov:skip=CKV_AWS_144:Cross-region replication adds cost and may move data outside the EU. Optional extra, not part of the baseline.
+  #checkov:skip=CKV2_AWS_62:Event notifications are not a security control for this baseline.
+  #checkov:skip=CKV_AWS_18:Access logging needs a separate log bucket. Planned as an optional input; CloudTrail already records API activity.
   bucket        = var.bucket_name
   force_destroy = var.force_destroy
   tags          = var.tags
@@ -72,6 +96,28 @@ resource "aws_s3_bucket_versioning" "this" {
   versioning_configuration {
     status = "Enabled"
   }
+}
+
+# Cleans up old object versions and half-finished uploads so storage is not kept forever.
+resource "aws_s3_bucket_lifecycle_configuration" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  rule {
+    id     = "clean-up-old-versions"
+    status = "Enabled"
+
+    filter {}
+
+    noncurrent_version_expiration {
+      noncurrent_days = var.noncurrent_version_expiration_days
+    }
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+  }
+
+  depends_on = [aws_s3_bucket_versioning.this]
 }
 
 # Refuses any request that does not use HTTPS.
