@@ -43,4 +43,4 @@ Never commit credentials, `.env` files or state files. The `.gitignore` already 
 
 ## Licence
 
-To be decided before the first public release.
+MIT. See [LICENSE](LICENSE).
