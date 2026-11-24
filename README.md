@@ -1,4 +1,5 @@
 # aws-eu-baseline
+![checks](https://github.com/esthernduribe/aws-eu-baseline/actions/workflows/checks.yml/badge.svg?branch=main)
 
 OpenTofu code for a GDPR-aligned technical baseline on AWS, using EU regions only.
 
