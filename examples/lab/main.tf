@@ -36,6 +36,10 @@ module "audit_logging" {
   }
 }
 
+module "account_baseline" {
+  source = "../../modules/account-baseline"
+}
+
 module "budget_alarm" {
   source = "../../modules/budget-alarm"
 

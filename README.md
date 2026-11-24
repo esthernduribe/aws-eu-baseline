@@ -2,12 +2,12 @@
 
 OpenTofu code for a GDPR-aligned technical baseline on AWS, using EU regions only.
 
-**Status:** early development. The first three modules work in a lab account (tested in eu-north-1, Stockholm). Not ready for production use.
+**Status:** early development. The first four modules work in a lab account (tested in eu-north-1, Stockholm). Not ready for production use.
 
 ## What this is, and is not
 
 - A small set of secure-by-default AWS building blocks, with plain-English notes on how they relate to GDPR Article 32.
-- Scanned with Checkov, with every finding and decision written down in `docs/scan-decisions.md`.
+- Scanned with Checkov (code) and Prowler (live lab account), with every finding and decision written down in `docs/scan-decisions.md`.
 - **Not legal advice**, and not a guarantee of GDPR compliance. It covers some technical measures only. See `docs/article-32-mapping.md` for what is and is not covered.
 
 ## Modules
@@ -16,6 +16,7 @@ OpenTofu code for a GDPR-aligned technical baseline on AWS, using EU regions onl
 |---|---|
 | `modules/secure-bucket` | Private S3 bucket: KMS encryption, blocked public access, HTTPS only, versioning, lifecycle rule, EU region guard |
 | `modules/audit-logging` | CloudTrail trail writing to an encrypted, private log bucket with log file validation and a retention period |
+| `modules/account-baseline` | IAM password policy and an account-wide S3 public access block |
 | `modules/budget-alarm` | Monthly budget that emails you at 80% of actual spend and 100% of forecast spend |
 
 ## Repository layout
@@ -35,7 +36,7 @@ SCOPE.md     decisions and the plan
 
 ## Tooling
 
-OpenTofu, the AWS provider (6.x), Checkov, Prowler (planned). EU regions only.
+OpenTofu, the AWS provider (6.x), Checkov (code scan) and Prowler (live account scan). EU regions only.
 
 ## Secrets
 
