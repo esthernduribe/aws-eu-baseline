@@ -1,47 +1,37 @@
-# Scope and decisions
+# Scope
 
-Working title: aws-eu-baseline. Branding comes later.
+## Goal
 
-## Decisions made
+A small set of secure-by-default AWS building blocks for EU regions, written in OpenTofu, with plain-English notes on how they relate to GDPR Article 32. This is a learning and portfolio project. It is not legal advice and it is not a compliance guarantee.
 
-- **Tooling:** OpenTofu, not Terraform. OpenTofu uses the MPL 2.0 licence, which is simpler for distributing modules.
-- **Region:** the code takes the region as a variable and only allows EU regions. The lab account is fixed to eu-north-1 (Stockholm), so that is the default for testing.
-- **Claims:** the project says "GDPR-aligned technical baseline", never "GDPR compliant".
-- **Credentials:** temporary credentials from `aws login`, no long-lived keys in files.
+## Design decisions
 
-## Known limits of the lab account
+- **OpenTofu, not Terraform.** OpenTofu is open source (MPL 2.0), so the code stays free to use and share.
+- **EU regions only.** The region is a variable, and the modules refuse to plan outside a list of EU regions.
+- **Wording.** This is a "GDPR-aligned technical baseline". It covers some technical measures only. Organisational duties (lawful basis, records, processor agreements) are outside the code.
+- **Temporary credentials.** Sign in with `aws login`. Long-lived access keys are never used or stored.
+- **Written reasons for every skipped check.** Scanner findings and decisions are recorded in `docs/scan-decisions.md`.
 
-The lab account uses AWS's new sign-up experience on the Free plan. S3, KMS, CloudTrail, Config, IAM and Budgets are available. GuardDuty, Security Hub, Control Tower, Organizations and Identity Center are not, so the paid pack cannot be fully tested here without activating advanced features.
-- **Repository:** private while in development. A separate public repo will hold the free "lite" version.
+## What is in this repository
 
-## Lite version (public later)
+- `modules/secure-bucket`: private, encrypted S3 bucket with versioning, HTTPS only and a lifecycle rule
+- `modules/audit-logging`: CloudTrail trail to an encrypted, private log bucket with a retention period
+- `modules/budget-alarm`: monthly budget with email alerts
+- `examples/`: working examples that use the modules
+- `docs/`: architecture, Article 32 mapping and scan decisions
 
-1. EU region guardrail
-2. Encrypted, private storage module (KMS, block public access, TLS only)
-3. CloudTrail logging to an encrypted bucket
-4. Budget alarm
-5. Article 32 mapping notes and an architecture diagram
-6. Checkov and Prowler scan results
+## Known limits
 
-## Paid pack (private, later)
+- Tested in a single AWS account on the Free plan, in eu-north-1 (Stockholm). Some features, such as multi-region trails and AWS Organizations, are not available on that plan.
+- Not production hardened. Review everything before using it with real personal data.
+- No pseudonymisation, full backup process or replication. See `docs/article-32-mapping.md` for the full list of gaps.
 
-- Multi-account setup
-- Security Hub, GuardDuty and Config
-- IAM Identity Center permission sets
-- Backup and retention rules
-- Records-of-processing and processor-agreement checklists
-- Setup support
+## Never in this repository
 
-## Never goes in any repo
+API keys, tokens, passwords, AWS credentials, state files, customer information or private datasets.
 
-API keys, tokens, passwords, AWS credentials, state files, customer information, private datasets.
+## Roadmap
 
-## Stages
-
-1. Repo, README, .gitignore and scope (this stage)
-2. Safe AWS account setup and local tools
-3. First module: region guardrail and encrypted storage
-4. Audit logging and budget alarm
-5. Scanning and tests
-6. Documentation and diagrams
-7. Public lite release
+1. Scan the live account with Prowler and record the results.
+2. Add optional inputs for access logging and CloudWatch Logs.
+3. Add more modules and examples.
