@@ -28,8 +28,22 @@ docs/        architecture, Article 32 mapping, scan decisions
 SCOPE.md     decisions and the plan
 ```
 
+## Quick start
+
+You need OpenTofu, AWS CLI v2 and Git. Sign in with `aws login`, then:
+
+```
+git clone https://github.com/esthernduribe/aws-eu-baseline.git
+cd aws-eu-baseline/examples/basic
+tofu init
+tofu plan
+```
+
+Full steps, including how to remove everything afterwards, are in [docs/quickstart.md](docs/quickstart.md).
+
 ## Documentation
 
+- [Quick start](docs/quickstart.md)
 - [Architecture](docs/architecture.md)
 - [Article 32 mapping](docs/article-32-mapping.md)
 - [Scan decisions](docs/scan-decisions.md)
