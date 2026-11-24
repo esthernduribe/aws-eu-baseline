@@ -11,11 +11,11 @@ Status key: **Built** (in the modules and tested in the lab), **Partly**, **Not 
 |---|---|---|
 | (a) encryption of personal data | Buckets encrypted at rest with a KMS key (automatic rotation on). Requests without HTTPS are refused. | Built |
 | (a) pseudonymisation | Not covered. This is a data design choice, not infrastructure. | Not covered |
-| (b) ongoing confidentiality | All public access blocked on both buckets. ACLs disabled so only policies control access. Explicit KMS key policy. | Built |
+| (b) ongoing confidentiality | All public access blocked on both buckets and, with the account-baseline module, across the whole account for S3. ACLs disabled so only policies control access. Explicit KMS key policy. Strong IAM password policy. | Built |
 | (b) ongoing integrity | CloudTrail log file validation shows whether logs were altered. Bucket versioning keeps earlier versions of objects. | Built |
 | (b) ongoing availability and resilience | Versioning helps recover from deletion or overwrite. No replication or multi-region setup. | Partly |
 | (c) restore availability and access after an incident | Versioning allows recovery of earlier object versions. No full backup or restore process. | Partly |
-| (d) regular testing of measures | Checkov scans the code (81 passed, 0 failed, 15 skipped with written reasons). Prowler scan of the live account planned. | Partly |
+| (d) regular testing of measures | Checkov scans the code (81 passed, 0 failed, 15 skipped with written reasons). Prowler scanned the live lab account: 50 passed and 19 failed after fixes, with every remaining finding explained in `scan-decisions.md`. | Partly |
 
 ## Related articles
 
